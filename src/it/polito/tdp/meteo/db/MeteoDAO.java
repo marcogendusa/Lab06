@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+
+import java.util.*;
+import java.util.Calendar;
 import java.util.List;
 
 import it.polito.tdp.meteo.bean.Rilevamento;
@@ -40,13 +42,35 @@ public class MeteoDAO {
 	}
 
 	public List<Rilevamento> getAllRilevamentiLocalitaMese(int mese, String localita) {
+		
+		List<Rilevamento> rilevamenti = this.getAllRilevamenti();
+		List<Rilevamento> l = new LinkedList<>();
+		
+		for(Rilevamento r: rilevamenti) {
+			Calendar c = this.toCalendar(r.getData());
+			if(r.getLocalita().compareTo(localita) == 0 && c.get(Calendar.MONTH)+1 == mese)
+				l.add(r);
+		}
 
-		return null;
+		return l;
+	}
+	
+	public Calendar toCalendar(Date d) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(d);
+		return c;
 	}
 
 	public Double getAvgRilevamentiLocalitaMese(int mese, String localita) {
-
-		return 0.0;
+		
+		List<Rilevamento> rilevamenti = this.getAllRilevamentiLocalitaMese(mese, localita);
+		double somma = 0;
+		
+		for(Rilevamento r: rilevamenti) {
+			somma += r.getUmidita();
+		}
+		
+		return somma/rilevamenti.size();
 	}
 
 }
