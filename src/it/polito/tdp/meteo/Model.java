@@ -18,6 +18,9 @@ public class Model {
 	MeteoDAO meteoDao = new MeteoDAO();
 	CittaDAO cittaDao = new CittaDAO();
 	
+	private double punteggioMiglioreSoluzione;
+	private List<SimpleCity> miglioreSoluzione = new ArrayList<>();
+	
 	List<Citta> citta;
 
 	public Model() {
@@ -43,10 +46,17 @@ public class Model {
 	}
 
 	public String trovaSequenza(int mese) {
-		
+
+		punteggioMiglioreSoluzione = 0;
+		miglioreSoluzione = null;
+
 		recursive(0, new ArrayList<SimpleCity>());
-		
-		return "TODO!";
+
+		if (miglioreSoluzione != null) {
+			return miglioreSoluzione.toString();
+		}
+
+		return "Nessuna soluzione trovata";
 	}
 	
 	public void recursive(int step, List<SimpleCity> cittaVisitate) {
@@ -59,16 +69,16 @@ public class Model {
 
 	private Double punteggioSoluzione(List<SimpleCity> soluzioneCandidata) {
 
-		double score = 0.0;
+		double punteggio = 0.0;
 		
 		for(SimpleCity sc: soluzioneCandidata) {
 			for(Citta c: this.citta) {
 				if(c.getNome().compareTo(sc.getNome())==0)
-					score += sc.getCosto()*c.getCounter() + 100;
+					punteggio += sc.getCosto()*c.getCounter() + COST;
 			}
 			
 		}
-		return score;
+		return punteggio;
 	}
 
 	private boolean controllaParziale(List<SimpleCity> parziale) {
